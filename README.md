@@ -1,8 +1,8 @@
 # **AgniKit: Unofficial Swift SDK for Firecrawl 🔥**
 
-AgniKit is the unofficial Swift SDK for the [Firecrawl](https://www.firecrawl.dev) API. It provides a simple way to integrate Firecrawl's web scraping and crawling capabilities into your Swift projects for prototyping and development.
+AgniKit is the unofficial Swift SDK for the [Firecrawl](https://www.firecrawl.dev) API for Firecrawl's web scraping and crawling capabilities into your Swift projects for prototyping and development!
 
-Agni (अग्नि) is the Sanskrit word for "fire", which aligns with the "fire" theme of Firecrawl. In Hindu mythology, Agni is also the god of fire, representing power and purification.
+Agni (अग्नि) is the Sanskrit word for "fire" for the "fire" theme of Firecrawl. In Hindu mythology, Agni is also the god of fire, representing power and purification.
 
 ## **Quickstart**
 
@@ -11,8 +11,7 @@ Find the quickstart of Firecrawl here: [Quickstart](https://docs.firecrawl.dev/i
 ## **Features**
 
 - One line Swift APIs for Firecrawl API
-- Support for scraping, crawling, and data extraction
-- Swift concurrency
+- Support for scraping, crawling, and mapping
 
 ## **Installation**
 
@@ -93,7 +92,7 @@ print("Crawl job canceled: \(cancelResult)")
 
 ## **Contributing**
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are more than welcome! I hope you submit a Pull Request!
 
 ## **License**
 
@@ -101,4 +100,4 @@ AgniKit is available under the MIT license. See the LICENSE file for more info.
 
 ---
 
-AgniKit is not officially associated with Firecrawl. It is aimed for me to learn about its APIs and provide Swift developers easy access to Firecrawl's capabilities.
+AgniKit is *not* officially associated with Firecrawl. It is aimed for me to learn about its APIs and provide developers easy way to Firecrawl.
