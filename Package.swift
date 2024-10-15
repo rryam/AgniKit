@@ -20,6 +20,10 @@ let package = Package(
     )
   ],
   targets: [
-    .target(name: "AgniKit")
+    .target(name: "AgniKit"),
+    .testTarget(
+      name: "AgniKitTests",
+      dependencies: ["AgniKit"]
+    )
   ]
 )
