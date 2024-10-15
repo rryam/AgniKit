@@ -9,7 +9,7 @@ import Foundation
 ///
 /// - Note: The Firecrawl API has rate limits. If exceeded, you will receive a 429 response code.
 ///
-/// - See also: [Firecrawl API Documentation](https://api.firecrawl.dev)
+/// - SeeAlso: [Firecrawl API Documentation](https://api.firecrawl.dev)
 public actor AgniKit {
   /// The base URL for all Firecrawl API requests.
   private let baseURL = URL(string: "https://api.firecrawl.dev")!
@@ -34,5 +34,74 @@ public actor AgniKit {
     return request
   }
   
-  // Add methods for specific API endpoints here
+  /// Scrapes a webpage using the Firecrawl API.
+  ///
+  /// This method sends a POST request to the Firecrawl API's scrape endpoint to extract content from a specified URL.
+  ///
+  /// - Parameters:
+  ///   - url: The URL of the webpage to scrape.
+  ///   - formats: An array of formats to include in the output. Default is ["markdown"].
+  ///   - onlyMainContent: A boolean indicating whether to return only the main content of the page. Default is true.
+  ///   - includeTags: An optional array of HTML tags to include in the output.
+  ///   - excludeTags: An optional array of HTML tags to exclude from the output.
+  ///   - headers: An optional dictionary of headers to send with the request.
+  ///   - waitFor: An optional delay in milliseconds before fetching the content.
+  ///   - timeout: An optional timeout in milliseconds for the request. Default is 30000.
+  ///   - extract: An optional extraction configuration.
+  ///   - actions: An optional array of actions to perform on the page before grabbing the content.
+  ///
+  /// - Returns: A dictionary containing the scraped data.
+  ///
+  /// - Throws: An error if the request fails or if the response cannot be decoded.
+  public func scrape(
+    url: String,
+    formats: [String] = ["markdown"],
+    onlyMainContent: Bool = true,
+    includeTags: [String]? = nil,
+    excludeTags: [String]? = nil,
+    headers: [String: String]? = nil,
+    waitFor: Int? = nil,
+    timeout: Int = 30000,
+    extract: [String: Any]? = nil,
+    actions: [[String: Any]]? = nil
+  ) async throws -> [String: Any] {
+    var request = makeRequest(for: "v1/scrape")
+    request.httpMethod = "POST"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    
+    var body: [String: Any] = [
+      "url": url,
+      "formats": formats,
+      "onlyMainContent": onlyMainContent,
+      "timeout": timeout
+    ]
+    
+    if let includeTags = includeTags { body["includeTags"] = includeTags }
+    if let excludeTags = excludeTags { body["excludeTags"] = excludeTags }
+    if let headers = headers { body["headers"] = headers }
+    if let waitFor = waitFor { body["waitFor"] = waitFor }
+    if let extract = extract { body["extract"] = extract }
+    if let actions = actions { body["actions"] = actions }
+    
+    request.httpBody = try JSONSerialization.data(withJSONObject: body)
+    
+    let (data, response) = try await URLSession.shared.data(for: request)
+    
+    guard let httpResponse = response as? HTTPURLResponse else {
+      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+    }
+    
+    guard httpResponse.statusCode == 200 else {
+      throw NSError(domain: "AgniKit", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP error \(httpResponse.statusCode)"])
+    }
+    
+    guard let result = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+          let success = result["success"] as? Bool,
+          success,
+          let scrapedData = result["data"] as? [String: Any] else {
+      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response format"])
+    }
+    
+    return scrapedData
+  }
 }
