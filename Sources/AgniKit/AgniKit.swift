@@ -203,4 +203,39 @@ public actor AgniKit {
     
     return result
   }
+  /// Cancels a crawl job using the Firecrawl API.
+  ///
+  /// This method sends a DELETE request to the Firecrawl API's crawl endpoint to cancel a specific crawl job.
+  ///
+  /// - Parameter id: The ID of the crawl job to cancel.
+  ///
+  /// - Returns: A dictionary containing the response information, including a success flag and a message.
+  ///
+  /// - Throws: An error if the request fails, if the response cannot be decoded, or if the server returns a non-200 status code.
+  ///
+  /// - Important: This operation is irreversible. Once a crawl job is cancelled, it cannot be resumed.
+  ///
+  /// - Note: If the crawl job has already completed or doesn't exist, the API may return a 404 error.
+  public func cancelCrawl(id: String) async throws -> [String: Any] {
+    var request = makeRequest(for: "v1/crawl/\(id)")
+    request.httpMethod = "DELETE"
+    
+    let (data, response) = try await URLSession.shared.data(for: request)
+    
+    guard let httpResponse = response as? HTTPURLResponse else {
+      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+    }
+    
+    guard httpResponse.statusCode == 200 else {
+      throw NSError(domain: "AgniKit", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP error \(httpResponse.statusCode)"])
+    }
+    
+    guard let result = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+          let success = result["success"] as? Bool,
+          success else {
+      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response format"])
+    }
+    
+    return result
+  }
 }
