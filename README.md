@@ -1,8 +1,12 @@
 # **AgniKit: Unofficial Swift SDK for Firecrawl 🔥**
 
-AgniKit is the unofficial Swift SDK for the Firecrawl API. It provides a simple way to integrate Firecrawl's web scraping and crawling capabilities into your Swift projects for prototyping and development.
+AgniKit is the unofficial Swift SDK for the [Firecrawl](https://www.firecrawl.dev) API. It provides a simple way to integrate Firecrawl's web scraping and crawling capabilities into your Swift projects for prototyping and development.
 
 Agni (अग्नि) is the Sanskrit word for "fire", which aligns with the "fire" theme of Firecrawl. In Hindu mythology, Agni is also the god of fire, representing power and purification.
+
+## **Quickstart**
+
+Find the quickstart of Firecrawl here: [Quickstart](https://docs.firecrawl.dev/introduction)
 
 ## **Features**
 
