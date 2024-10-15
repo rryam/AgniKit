@@ -174,4 +174,33 @@ public actor AgniKit {
     
     return result
   }
+  
+  /// Retrieves the status of a crawl job using the Firecrawl API.
+  ///
+  /// This method sends a GET request to the Firecrawl API's crawl status endpoint to retrieve information about a specific crawl job.
+  ///
+  /// - Parameter id: The ID of the crawl job to retrieve status for.
+  ///
+  /// - Returns: A dictionary containing the crawl job status information.
+  ///
+  /// - Throws: An error if the request fails or if the response cannot be decoded.
+  public func getCrawlStatus(id: String) async throws -> [String: Any] {
+    let request = makeRequest(for: "v1/crawl/\(id)")
+    
+    let (data, response) = try await URLSession.shared.data(for: request)
+    
+    guard let httpResponse = response as? HTTPURLResponse else {
+      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+    }
+    
+    guard httpResponse.statusCode == 200 else {
+      throw NSError(domain: "AgniKit", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP error \(httpResponse.statusCode)"])
+    }
+    
+    guard let result = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response format"])
+    }
+    
+    return result
+  }
 }
