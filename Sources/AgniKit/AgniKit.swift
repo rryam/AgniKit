@@ -10,7 +10,7 @@ import Foundation
 /// - Note: The Firecrawl API has rate limits. If exceeded, you will receive a 429 response code.
 ///
 /// - SeeAlso: [Firecrawl API Documentation](https://api.firecrawl.dev)
-public actor AgniKit {
+public struct AgniKit {
   /// The base URL for all Firecrawl API requests.
   private let baseURL = URL(string: "https://api.firecrawl.dev")!
   
@@ -64,7 +64,7 @@ public actor AgniKit {
     timeout: Int = 30000,
     extract: [String: Any]? = nil,
     actions: [[String: Any]]? = nil
-  ) async throws -> [String: Any] {
+  ) async throws -> ScrapeResponse {
     var request = makeRequest(for: "v1/scrape")
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -95,14 +95,9 @@ public actor AgniKit {
       throw NSError(domain: "AgniKit", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP error \(httpResponse.statusCode)"])
     }
     
-    guard let result = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-          let success = result["success"] as? Bool,
-          success,
-          let scrapedData = result["data"] as? [String: Any] else {
-      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response format"])
-    }
-    
-    return scrapedData
+    let decoder = JSONDecoder()
+    let scrapeResponse = try decoder.decode(ScrapeResponse.self, from: data)
+    return scrapeResponse
   }
   
   /// Crawls a website using the Firecrawl API.
