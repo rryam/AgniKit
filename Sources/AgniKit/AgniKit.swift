@@ -238,4 +238,57 @@ public actor AgniKit {
     
     return result
   }
+
+  /// Maps a website using the Firecrawl API.
+  ///
+  /// This method sends a POST request to the Firecrawl API's map endpoint to crawl and map a website starting from a specified URL.
+  ///
+  /// - Parameters:
+  ///   - url: The base URL to start crawling from.
+  ///   - search: An optional search query to use for mapping. During the Alpha phase, the 'smart' part of the search functionality is limited to 1000 search results.
+  ///   - ignoreSitemap: A boolean indicating whether to ignore the website sitemap when crawling. Default is true.
+  ///   - includeSubdomains: A boolean indicating whether to include subdomains of the website. Default is false.
+  ///   - limit: The maximum number of links to return. Default is 5000.
+  ///
+  /// - Returns: A dictionary containing the response information, including a success flag and an array of mapped links.
+  ///
+  /// - Throws: An error if the request fails, if the response cannot be decoded, or if the server returns a non-200 status code.
+  ///
+  /// - Important: The number of links returned may be limited by your API plan.
+  ///
+  /// - Note: If the 'search' parameter is provided, the API will attempt to find relevant pages within the crawled site.
+  public func map(url: String, search: String? = nil, ignoreSitemap: Bool = true, includeSubdomains: Bool = false, limit: Int = 5000) async throws -> [String: Any] {
+    var request = makeRequest(for: "v1/map")
+    request.httpMethod = "POST"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    
+    let body: [String: Any] = [
+      "url": url,
+      "search": search as Any,
+      "ignoreSitemap": ignoreSitemap,
+      "includeSubdomains": includeSubdomains,
+      "limit": limit
+    ]
+    
+    request.httpBody = try JSONSerialization.data(withJSONObject: body)
+    
+    let (data, response) = try await URLSession.shared.data(for: request)
+    
+    guard let httpResponse = response as? HTTPURLResponse else {
+      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+    }
+    
+    guard httpResponse.statusCode == 200 else {
+      throw NSError(domain: "AgniKit", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP error \(httpResponse.statusCode)"])
+    }
+    
+    guard let result = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+          let success = result["success"] as? Bool,
+          success,
+          let links = result["links"] as? [String] else {
+      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response format"])
+    }
+    
+    return result
+  }
 }
