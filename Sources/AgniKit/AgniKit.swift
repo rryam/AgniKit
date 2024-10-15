@@ -104,4 +104,74 @@ public actor AgniKit {
     
     return scrapedData
   }
+  
+  /// Crawls a website using the Firecrawl API.
+  ///
+  /// This method sends a POST request to the Firecrawl API's crawl endpoint to crawl a specified URL and its linked pages.
+  ///
+  /// - Parameters:
+  ///   - url: The base URL to start crawling from.
+  ///   - excludePaths: An optional array of regex patterns to exclude from the crawl.
+  ///   - includePaths: An optional array of regex patterns to include in the crawl.
+  ///   - maxDepth: The maximum depth to crawl relative to the entered URL. Default is 2.
+  ///   - ignoreSitemap: A boolean indicating whether to ignore the website sitemap when crawling. Default is true.
+  ///   - limit: The maximum number of pages to crawl. Default is 10.
+  ///   - allowBackwardLinks: A boolean indicating whether to enable navigation to previously linked pages. Default is false.
+  ///   - allowExternalLinks: A boolean indicating whether to allow following links to external websites. Default is false.
+  ///   - webhook: An optional URL to send webhook notifications about the crawl progress.
+  ///   - scrapeOptions: An optional dictionary of scrape options to apply to each crawled page.
+  ///
+  /// - Returns: A dictionary containing the crawl job information, including the job ID and base URL.
+  ///
+  /// - Throws: An error if the request fails or if the response cannot be decoded.
+  public func crawl(
+    url: String,
+    excludePaths: [String]? = nil,
+    includePaths: [String]? = nil,
+    maxDepth: Int = 2,
+    ignoreSitemap: Bool = true,
+    limit: Int = 10,
+    allowBackwardLinks: Bool = false,
+    allowExternalLinks: Bool = false,
+    webhook: String? = nil,
+    scrapeOptions: [String: Any]? = nil
+  ) async throws -> [String: Any] {
+    var request = makeRequest(for: "v1/crawl")
+    request.httpMethod = "POST"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    
+    var body: [String: Any] = [
+      "url": url,
+      "maxDepth": maxDepth,
+      "ignoreSitemap": ignoreSitemap,
+      "limit": limit,
+      "allowBackwardLinks": allowBackwardLinks,
+      "allowExternalLinks": allowExternalLinks
+    ]
+    
+    if let excludePaths = excludePaths { body["excludePaths"] = excludePaths }
+    if let includePaths = includePaths { body["includePaths"] = includePaths }
+    if let webhook = webhook { body["webhook"] = webhook }
+    if let scrapeOptions = scrapeOptions { body["scrapeOptions"] = scrapeOptions }
+    
+    request.httpBody = try JSONSerialization.data(withJSONObject: body)
+    
+    let (data, response) = try await URLSession.shared.data(for: request)
+    
+    guard let httpResponse = response as? HTTPURLResponse else {
+      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+    }
+    
+    guard httpResponse.statusCode == 200 else {
+      throw NSError(domain: "AgniKit", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP error \(httpResponse.statusCode)"])
+    }
+    
+    guard let result = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+          let success = result["success"] as? Bool,
+          success else {
+      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response format"])
+    }
+    
+    return result
+  }
 }
