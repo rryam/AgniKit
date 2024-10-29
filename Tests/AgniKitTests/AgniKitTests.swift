@@ -14,7 +14,7 @@ import Foundation
   /// It verifies that the scraped content contains expected elements from the Apple documentation.
   @Test("Scrape Apple's Defining Tests documentation")
   func testWebScraping() async throws {
-    let agniKit = AgniKit(apiKey: "no")
+    let agniKit = AgniKit(apiKey: "fc-")
     
     let url = "https://developer.apple.com/documentation/testing/definingtests"
     

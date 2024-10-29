@@ -286,4 +286,122 @@ public struct AgniKit {
     
     return result
   }
+
+  /// Performs a synchronous batch scrape operation
+  ///
+  /// This method sends a POST request to scrape multiple URLs simultaneously and waits for all results.
+  ///
+  /// - Parameters:
+  ///   - urls: Array of URLs to scrape
+  ///   - formats: Array of desired output formats (e.g. ["markdown", "html"]). Default is ["markdown"]
+  ///   - onlyMainContent: Whether to return only the main content. Default is true
+  ///   - timeout: Timeout in milliseconds. Default is 30000
+  ///
+  /// - Returns: A BatchScrapeResponse containing all scraped results
+  ///
+  /// - Throws: An error if the request fails or if the response cannot be decoded
+  public func batchScrape(
+    urls: [String],
+    formats: [String] = ["markdown"],
+    onlyMainContent: Bool = true,
+    timeout: Int = 30000
+  ) async throws -> BatchScrapeResponse {
+    var request = makeRequest(for: "v1/batch/scrape")
+    request.httpMethod = "POST"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    
+    let body: [String: Any] = [
+      "urls": urls,
+      "formats": formats,
+      "onlyMainContent": onlyMainContent,
+      "timeout": timeout
+    ]
+    
+    request.httpBody = try JSONSerialization.data(withJSONObject: body)
+    
+    let (data, response) = try await URLSession.shared.data(for: request)
+    
+    guard let httpResponse = response as? HTTPURLResponse else {
+      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+    }
+    
+    guard httpResponse.statusCode == 200 else {
+      throw NSError(domain: "AgniKit", code: httpResponse.statusCode, 
+                   userInfo: [NSLocalizedDescriptionKey: "HTTP error \(httpResponse.statusCode)"])
+    }
+    
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+    return try decoder.decode(BatchScrapeResponse.self, from: data)
+  }
+  
+  /// Creates an asynchronous batch scrape job
+  ///
+  /// This method initiates a batch scrape job and returns immediately with a job ID
+  ///
+  /// - Parameters:
+  ///   - urls: Array of URLs to scrape
+  ///   - formats: Array of desired output formats (e.g. ["markdown", "html"]). Default is ["markdown"]
+  ///   - onlyMainContent: Whether to return only the main content. Default is true
+  ///
+  /// - Returns: A BatchScrapeJobResponse containing the job ID and status URL
+  ///
+  /// - Throws: An error if the request fails or if the response cannot be decoded
+  public func createBatchScrapeJob(
+    urls: [String],
+    formats: [String] = ["markdown"],
+    onlyMainContent: Bool = true
+  ) async throws -> BatchScrapeJobResponse {
+    var request = makeRequest(for: "v1/batch/scrape")
+    request.httpMethod = "POST"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    
+    let body: [String: Any] = [
+      "urls": urls,
+      "formats": formats,
+      "onlyMainContent": onlyMainContent,
+      "async": true
+    ]
+    
+    request.httpBody = try JSONSerialization.data(withJSONObject: body)
+    
+    let (data, response) = try await URLSession.shared.data(for: request)
+    
+    guard let httpResponse = response as? HTTPURLResponse else {
+      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+    }
+    
+    guard httpResponse.statusCode == 200 else {
+      throw NSError(domain: "AgniKit", code: httpResponse.statusCode, 
+                   userInfo: [NSLocalizedDescriptionKey: "HTTP error \(httpResponse.statusCode)"])
+    }
+    
+    return try JSONDecoder().decode(BatchScrapeJobResponse.self, from: data)
+  }
+  
+  /// Checks the status of an asynchronous batch scrape job
+  ///
+  /// - Parameter id: The job ID returned from createBatchScrapeJob
+  ///
+  /// - Returns: A BatchScrapeResponse containing the current status and any completed results
+  ///
+  /// - Throws: An error if the request fails or if the response cannot be decoded
+  public func getBatchScrapeStatus(id: String) async throws -> BatchScrapeResponse {
+    let request = makeRequest(for: "v1/batch/scrape/\(id)")
+    
+    let (data, response) = try await URLSession.shared.data(for: request)
+    
+    guard let httpResponse = response as? HTTPURLResponse else {
+      throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+    }
+    
+    guard httpResponse.statusCode == 200 else {
+      throw NSError(domain: "AgniKit", code: httpResponse.statusCode, 
+                   userInfo: [NSLocalizedDescriptionKey: "HTTP error \(httpResponse.statusCode)"])
+    }
+    
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+    return try decoder.decode(BatchScrapeResponse.self, from: data)
+  }
 }
