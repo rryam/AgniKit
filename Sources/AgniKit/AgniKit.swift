@@ -49,6 +49,7 @@ public struct AgniKit {
   ///   - timeout: An optional timeout in milliseconds for the request. Default is 30000.
   ///   - extract: An optional extraction configuration.
   ///   - actions: An optional array of actions to perform on the page before grabbing the content.
+  ///   - location: An optional location configuration to apply to the request.
   ///
   /// - Returns: A dictionary containing the scraped data.
   ///
@@ -63,7 +64,8 @@ public struct AgniKit {
     waitFor: Int? = nil,
     timeout: Int = 30000,
     extract: [String: Any]? = nil,
-    actions: [[String: Any]]? = nil
+    actions: [[String: Any]]? = nil,
+    location: LocationConfig? = nil
   ) async throws -> ScrapeResponse {
     var request = makeRequest(for: "v1/scrape")
     request.httpMethod = "POST"
@@ -82,6 +84,13 @@ public struct AgniKit {
     if let waitFor = waitFor { body["waitFor"] = waitFor }
     if let extract = extract { body["extract"] = extract }
     if let actions = actions { body["actions"] = actions }
+    
+    if let location = location {
+      body["location"] = [
+        "country": location.country.rawValue,
+        "languages": location.languages
+      ].compactMapValues { $0 }
+    }
     
     request.httpBody = try JSONSerialization.data(withJSONObject: body)
     
@@ -296,6 +305,7 @@ public struct AgniKit {
   ///   - formats: Array of desired output formats (e.g. ["markdown", "html"]). Default is ["markdown"]
   ///   - onlyMainContent: Whether to return only the main content. Default is true
   ///   - timeout: Timeout in milliseconds. Default is 30000
+  ///   - location: An optional location configuration to apply to the request.
   ///
   /// - Returns: A BatchScrapeResponse containing all scraped results
   ///
@@ -304,19 +314,27 @@ public struct AgniKit {
     urls: [String],
     formats: [String] = ["markdown"],
     onlyMainContent: Bool = true,
-    timeout: Int = 30000
+    timeout: Int = 30000,
+    location: LocationConfig? = nil
   ) async throws -> BatchScrapeResponse {
     var request = makeRequest(for: "v1/batch/scrape")
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     
-    let body: [String: Any] = [
+    var body: [String: Any] = [
       "urls": urls,
       "formats": formats,
       "onlyMainContent": onlyMainContent,
-      "timeout": timeout
+      "timeout": timeout,
     ]
-    
+
+    if let location = location {
+      body["location"] = [
+        "country": location.country.rawValue,
+        "languages": location.languages
+      ].compactMapValues { $0 }
+    }
+
     request.httpBody = try JSONSerialization.data(withJSONObject: body)
     
     let (data, response) = try await URLSession.shared.data(for: request)
@@ -343,6 +361,7 @@ public struct AgniKit {
   ///   - urls: Array of URLs to scrape
   ///   - formats: Array of desired output formats (e.g. ["markdown", "html"]). Default is ["markdown"]
   ///   - onlyMainContent: Whether to return only the main content. Default is true
+  ///   - location: An optional location configuration to apply to the request.
   ///
   /// - Returns: A BatchScrapeJobResponse containing the job ID and status URL
   ///
@@ -350,19 +369,27 @@ public struct AgniKit {
   public func createBatchScrapeJob(
     urls: [String],
     formats: [String] = ["markdown"],
-    onlyMainContent: Bool = true
+    onlyMainContent: Bool = true,
+    location: LocationConfig? = nil
   ) async throws -> BatchScrapeJobResponse {
     var request = makeRequest(for: "v1/batch/scrape")
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     
-    let body: [String: Any] = [
+    var body: [String: Any] = [
       "urls": urls,
       "formats": formats,
       "onlyMainContent": onlyMainContent,
       "async": true
     ]
     
+    if let location = location {
+      body["location"] = [
+        "country": location.country.rawValue,
+        "languages": location.languages
+      ].compactMapValues { $0 }
+    }
+
     request.httpBody = try JSONSerialization.data(withJSONObject: body)
     
     let (data, response) = try await URLSession.shared.data(for: request)
