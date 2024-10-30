@@ -16,4 +16,4 @@ public struct LocationConfig: Encodable {
     self.country = country
     self.languages = languages
   }
-} 
+}

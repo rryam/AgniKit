@@ -289,7 +289,7 @@ public struct AgniKit {
     guard let result = try JSONSerialization.jsonObject(with: data) as? [String: Any],
           let success = result["success"] as? Bool,
           success,
-          let links = result["links"] as? [String] else {
+          let _ = result["links"] as? [String] else {
       throw NSError(domain: "AgniKit", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid response format"])
     }
     
