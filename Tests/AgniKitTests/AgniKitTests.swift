@@ -68,17 +68,36 @@ import Foundation
   }
   
   /// Tests website mapping functionality
+  /// Tests website mapping functionality by mapping Apple's documentation site
+  /// and verifying the returned links and success status
+  ///
+  /// This test:
+  /// - Creates an AgniKit instance with test API key
+  /// - Maps the Apple Testing documentation URL with a limit of 10 links
+  /// - Verifies the response contains success=true and non-empty links array
   @Test("Map Apple's documentation site")
   func testMapping() async throws {
-    let agniKit = AgniKit(apiKey: "fc-4a967e2c76e34ca4809ebd606a9e2757")
+    let agniKit = AgniKit(apiKey: "fc")
     let url = "https://developer.apple.com/documentation/testing"
     
     let result = try await agniKit.map(
       url: url,
+      ignoreSitemap: true,
+      includeSubdomains: false,
       limit: 10
     )
     
-    #expect(result["success"] as? Bool == true)
-    #expect((result["links"] as? [String])?.count ?? 0 > 0)
+    guard let success = result["success"] as? Bool else {
+      throw NSError(domain: "AgniKitTests", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing success field in response"])
+    }
+    
+    guard let links = result["links"] as? [String] else {
+      throw NSError(domain: "AgniKitTests", code: 2, userInfo: [NSLocalizedDescriptionKey: "Missing or invalid links array in response"])
+    }
+    
+    #expect(success)
+    #expect(!links.isEmpty)
+    #expect(links.count <= 10)
+    #expect(links.allSatisfy { $0.starts(with: "https://developer.apple.com/") })
   }
 }
