@@ -23,7 +23,7 @@ public struct BatchScrapeResponse: Codable {
 
 /// Represents the scraped result for a single URL in a batch
 public struct BatchScrapeResult: Codable {
-  /// The scraped content in markdown format (if requested)
+  /// The scraped content in markdown format (if requested)``
   public let markdown: String?
   
   /// The scraped content in HTML format (if requested) 
