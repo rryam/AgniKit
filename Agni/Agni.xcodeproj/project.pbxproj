@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		0A294A0A2CDA62F5002280B6 /* AgniKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0A294A092CDA62F5002280B6 /* AgniKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		0A2949D42CDA6039002280B6 /* Agni.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Agni.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A294A0A2CDA62F5002280B6 /* AgniKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = Agni;
 			packageProductDependencies = (
+				0A294A092CDA62F5002280B6 /* AgniKit */,
 			);
 			productName = Agni;
 			productReference = 0A2949D42CDA6039002280B6 /* Agni.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = 0A2949CB2CDA6039002280B6;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				0A294A082CDA62F5002280B6 /* XCRemoteSwiftPackageReference "AgniKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0A2949D52CDA6039002280B6 /* Products */;
 			projectDirPath = "";
@@ -339,6 +348,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0A294A082CDA62F5002280B6 /* XCRemoteSwiftPackageReference "AgniKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rryam/AgniKit";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0A294A092CDA62F5002280B6 /* AgniKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A294A082CDA62F5002280B6 /* XCRemoteSwiftPackageReference "AgniKit" */;
+			productName = AgniKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0A2949CC2CDA6039002280B6 /* Project object */;
 }
