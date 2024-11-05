@@ -49,13 +49,3 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
-      
-      - name: Build visionOS App
-        run: |
-          xcodebuild clean build \
-            -project Agni/Agni.xcodeproj \
-            -scheme Agni \
-            -destination "platform=visionOS Simulator,name=Apple Vision Pro" \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO
