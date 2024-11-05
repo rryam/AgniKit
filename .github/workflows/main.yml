@@ -1,0 +1,66 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-package:
+    name: Test AgniKit Package
+    runs-on: macos-15
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.0.app
+      
+      - name: Build Package
+        run: swift build -v
+      
+      - name: Run Package Tests
+        run: swift test -v
+        env:
+          AGNI_API_KEY: ${{ secrets.AGNI_API_KEY }}
+
+  test-app:
+    name: Test Agni iOS App
+    runs-on: macos-14
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.0.app
+      
+      - name: Build iOS App
+        run: |
+          xcodebuild clean build \
+            -project Agni/Agni.xcodeproj \
+            -scheme Agni \
+            -destination "platform=iOS Simulator,name=iPhone 15 Pro,OS=18.0" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+      
+      - name: Build macOS App
+        run: |
+          xcodebuild clean build \
+            -project Agni/Agni.xcodeproj \
+            -scheme Agni \
+            -destination "platform=macOS" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+      
+      - name: Build visionOS App
+        run: |
+          xcodebuild clean build \
+            -project Agni/Agni.xcodeproj \
+            -scheme Agni \
+            -destination "platform=visionOS Simulator,name=Apple Vision Pro" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
