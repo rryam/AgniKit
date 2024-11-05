@@ -16,6 +16,19 @@ public struct CrawlResponse {
   
   /// Collection of links between pages
   public let links: [CrawlLink]
+  
+  /// Creates a new CrawlResponse instance
+  /// - Parameters:
+  ///   - jobId: Unique identifier for the crawl job
+  ///   - startUrl: The starting URL for the crawl operation
+  ///   - pages: Collection of pages discovered during crawling
+  ///   - links: Collection of links between pages
+  public init(jobId: String, startUrl: URL, pages: [CrawlPage], links: [CrawlLink]) {
+    self.jobId = jobId
+    self.startUrl = startUrl
+    self.pages = pages
+    self.links = links
+  }
 }
 
 /// Raw page data from the crawl API response
@@ -34,6 +47,21 @@ public struct CrawlPage {
   
   /// HTTP status code from fetching the page
   public let status: Int
+  
+  /// Creates a new CrawlPage instance
+  /// - Parameters:
+  ///   - id: Unique identifier for the page
+  ///   - url: URL of the page
+  ///   - title: Title of the page
+  ///   - depth: Depth level from the start URL
+  ///   - status: HTTP status code from fetching the page
+  public init(id: String, url: URL, title: String, depth: Int, status: Int) {
+    self.id = id
+    self.url = url
+    self.title = title
+    self.depth = depth
+    self.status = status
+  }
 }
 
 /// Raw link data from the crawl API response
@@ -49,4 +77,17 @@ public struct CrawlLink {
   
   /// Link text content
   public let text: String
+  
+  /// Creates a new CrawlLink instance
+  /// - Parameters:
+  ///   - id: Unique identifier for the link
+  ///   - sourceId: ID of the source page
+  ///   - targetId: ID of the target page
+  ///   - text: Link text content
+  public init(id: String, sourceId: String, targetId: String, text: String) {
+    self.id = id
+    self.sourceId = sourceId
+    self.targetId = targetId
+    self.text = text
+  }
 } 
