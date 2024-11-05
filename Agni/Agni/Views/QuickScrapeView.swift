@@ -1,4 +1,5 @@
 import SwiftUI 
+import AgniKit
 
 struct QuickScrapeView: View {
   @State private var url = ""
@@ -9,6 +10,32 @@ struct QuickScrapeView: View {
   @State private var result: String = ""
   @State private var waitTime: Double = 0
   @State private var timeout: Double = 30
+  
+  private let agni = AgniKit(apiKey: "fc")
+  
+  private func performScrape() async {
+    do {
+      let includeTagsArray = includeTags.isEmpty ? nil : 
+        includeTags.split(separator: ",").map(String.init)
+      let excludeTagsArray = excludeTags.isEmpty ? nil : 
+        excludeTags.split(separator: ",").map(String.init)
+      
+      let response = try await agni.scrape(
+        url: url,
+        formats: formats,
+        onlyMainContent: onlyMainContent,
+        includeTags: includeTagsArray,
+        excludeTags: excludeTagsArray,
+        waitFor: Int(waitTime * 1000),
+        timeout: Int(timeout * 1000)
+      )
+      
+      result = response.data.markdown ?? "No markdown content available"
+      
+    } catch {
+      result = "Error: \(error.localizedDescription)"
+    }
+  }
   
   var body: some View {
     Form {
@@ -34,7 +61,7 @@ struct QuickScrapeView: View {
       Section("Actions") {
         Button("Scrape") {
           Task {
-         //   await performScrape()
+           await performScrape()
           }
         }
       }
