@@ -1,4 +1,5 @@
 import SwiftUI
+import AgniKit
 
 /// A view that visualizes the crawl map as an interactive graph.
 ///
@@ -10,7 +11,7 @@ struct CrawlMapVisualizer: View {
   
   /// Selected page for showing details
   @State private var selectedPage: CrawlPage?
-  
+
   /// View state for graph layout
   @State private var nodes: [NodeView] = []
   @State private var edges: [EdgeView] = []

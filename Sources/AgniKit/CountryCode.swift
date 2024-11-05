@@ -8,7 +8,7 @@
 ///
 /// - Note: The codes follow the official ISO 3166-1 alpha-2 standard maintained by the
 ///         International Organization for Standardization (ISO).
-public enum CountryCode: String, Codable {
+public enum CountryCode: String, Codable, CaseIterable {
   case afghanistan = "AF"
   case alandIslands = "AX" 
   case albania = "AL"

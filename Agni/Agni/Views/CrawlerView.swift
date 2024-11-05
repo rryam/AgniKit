@@ -105,7 +105,7 @@ struct CrawlerView: View {
       )
       
       // Convert API response to CrawlMap
-      crawlMap = CrawlMap(from: result)
+    //  crawlMap = CrawlMap(from: result)
       
     } catch {
       crawlError = error

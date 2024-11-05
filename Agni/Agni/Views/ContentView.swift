@@ -23,10 +23,10 @@ struct ContentView: View {
             Label("Quick Scrape", systemImage: "bolt")
           }
         
-        BatchScrapeView()
-          .tabItem {
-            Label("Batch Scrape", systemImage: "list.bullet")
-          }
+//        BatchScrapeView()
+//          .tabItem {
+//            Label("Batch Scrape", systemImage: "list.bullet")
+//          }
         
         CrawlerView()
           .tabItem {

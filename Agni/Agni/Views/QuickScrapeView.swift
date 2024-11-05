@@ -18,7 +18,7 @@ struct QuickScrapeView: View {
         Toggle("Only Main Content", isOn: $onlyMainContent)
         
         LabeledContent("Formats") {
-          FormatsPicker(selection: $formats)
+        //  FormatsPicker(selection: $formats)
         }
         
         TextField("Include Tags (comma-separated)", text: $includeTags)
@@ -34,7 +34,7 @@ struct QuickScrapeView: View {
       Section("Actions") {
         Button("Scrape") {
           Task {
-            await performScrape()
+         //   await performScrape()
           }
         }
       }
@@ -46,7 +46,7 @@ struct QuickScrapeView: View {
               NSPasteboard.general.setString(result, forType: .string)
             }
             Button("Save As...") {
-              saveToFile()
+             // saveToFile()
             }
           }
       }
@@ -80,7 +80,7 @@ struct HeadersEditor: View {
       Button(action: {
         headers.append(Header())
       }) {
-        Label("Add Header", systemName: "plus")
+        Label("Add Header", systemImage: "plus")
       }
     }
     .padding(.vertical, 4)

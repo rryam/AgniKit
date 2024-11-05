@@ -13,8 +13,8 @@ struct SettingsView: View {
   
   @AppStorage("apiKey") private var apiKey = ""
   @AppStorage("defaultLocation") private var defaultLocation: CountryCode = .unitedStates
-  @AppStorage("defaultLanguages") private var defaultLanguages: [String] = ["en-US"]
-  
+  @AppStorage("defaultLanguages") private var defaultLanguages: String = "en-US"
+
   // MARK: - Body
   
   var body: some View {
@@ -33,11 +33,11 @@ struct SettingsView: View {
         }
         .help("Select your primary operating country")
         
-        LanguageSelector(selectedLanguages: $defaultLanguages)
+      //  LanguageSelector(selectedLanguages: $defaultLanguages)
       }
       
       Section("Export Options") {
-        ExportOptionsView()
+       // ExportOptionsView()
       }
       
       Section("Advanced") {
@@ -56,7 +56,7 @@ struct SettingsView: View {
   private func resetSettings() {
     apiKey = ""
     defaultLocation = .unitedStates
-    defaultLanguages = ["en-US"]
+    defaultLanguages = "en-US"
   }
 }
 

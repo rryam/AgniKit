@@ -15,7 +15,7 @@ struct ResultView: View {
       
       ScrollView {
         if selectedFormat == "markdown" {
-          MarkdownView(content)
+       //   MarkdownView(content)
         } else {
           TextEditor(text: .constant(content))
             .font(.system(.body, design: .monospaced))
