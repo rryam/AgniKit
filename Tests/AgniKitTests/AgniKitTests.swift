@@ -77,7 +77,7 @@ import Foundation
   /// - Verifies the response contains success=true and non-empty links array
   @Test("Map Apple's documentation site")
   func testMapping() async throws {
-    let agniKit = AgniKit(apiKey: "fc")
+    let agniKit = AgniKit(apiKey: "fc-15d9574ec0a9482fa26a6b750aec14a9")
     let url = "https://developer.apple.com/documentation/testing"
     
     let result = try await agniKit.map(
