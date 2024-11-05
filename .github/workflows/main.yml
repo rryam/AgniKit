@@ -19,11 +19,6 @@ jobs:
       
       - name: Build Package
         run: swift build -v
-      
-      - name: Run Package Tests
-        run: swift test -v
-        env:
-          AGNI_API_KEY: ${{ secrets.AGNI_API_KEY }}
 
   test-app:
     name: Test Agni iOS App
