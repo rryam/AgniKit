@@ -20,9 +20,9 @@ jobs:
       - name: Build Package
         run: swift build -v
 
-  test-app:
-    name: Test Agni iOS App
-    runs-on: macos-14
+  build-macos-app:
+    name: Build Agni macOS App
+    runs-on: macos-15
     
     steps:
       - uses: actions/checkout@v4
